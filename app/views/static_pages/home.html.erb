@@ -1,0 +1,28 @@
+<!-- app/views/static_pages/home.html.erb -->
+<div class="p-8 space-y-8">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">📦 Tổng quan hệ thống</h1>
+  <p class="text-gray-500 mb-6">Tình hình kho hàng và hoạt động trong 7 ngày gần đây</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+      <div class="text-gray-500 text-sm">Tổng sản phẩm</div>
+      <div class="text-3xl font-semibold text-blue-600 mt-1"><%= Product.count %></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+      <div class="text-gray-500 text-sm">Đơn nhập (7 ngày)</div>
+      <div class="text-3xl font-semibold text-green-600 mt-1"><%= ImportOrder.where("created_at >= ?", 7.days.ago).count %></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+      <div class="text-gray-500 text-sm">Đơn xuất (7 ngày)</div>
+      <div class="text-3xl font-semibold text-orange-500 mt-1"><%= ExportOrder.where("created_at >= ?", 7.days.ago).count %></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+      <div class="text-gray-500 text-sm">Giá trị tồn kho</div>
+      <div class="text-3xl font-semibold text-gray-700 mt-1"><%= number_to_currency(Product.sum("quantity * price_per_unit"), unit: "₫", precision: 0) %></div>
+    </div>
+  </div>
+
+  <div class="text-center mt-8">
+    <%= link_to "➡ Xem chi tiết thống kê", stat_path, class: "inline-block px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition" %>
+  </div>
+</div>

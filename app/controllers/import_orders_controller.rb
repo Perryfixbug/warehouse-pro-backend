@@ -28,7 +28,6 @@ class ImportOrdersController < OrdersController
       product = Product.find_by(id: op.product_id)
       op.price_per_unit = product.price_per_unit if product.present?
     end
-    byebug
 
     if @order.save
       redirect_to @order, notice: "Tạo đơn hàng thành công!"
