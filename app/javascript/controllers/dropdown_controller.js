@@ -6,7 +6,10 @@ export default class extends Controller {
   connect(){
     this.timeout = null
     this.open = false
-    console.log("menu connected!");
+    if(this.element.classList.contains("active")){
+      this.open = !this.open
+      this.menuTarget.classList.remove("hidden") 
+    }
   }
 
   toggle(){

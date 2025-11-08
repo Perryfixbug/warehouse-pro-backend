@@ -1,14 +1,14 @@
-<%= form_with url: "/csv/create", local: true, multipart: true, class: "flex items-center", data: {controller: "csv"} do |f| %>
+<%= form_with url: "/csv/create", local: true, multipart: true, class: "flex items-center gap-2", data: {controller: "csv"} do |f| %>
   <%= f.hidden_field :type, value: type %>
 
   <div class="flex items-center gap-2">
     <label class="px-3 py-2 bg-gray-100 text-sm text-gray-700 rounded-md border border-gray-300 cursor-pointer hover:bg-gray-200 transition">
-      Chọn file CSV
+      Nhập từ CSV
       <%= f.file_field :file, accept: ".csv", class: "hidden", data: { action: "change->csv#fileSelected" } %>
     </label>
     <span id="file-name" class="text-sm text-gray-600 italic" data-csv-target="fileName"></span>
   </div>
 
-  <%= f.submit "Xác nhận", 
-        class: "bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition" %>
+  <%= f.submit "Xác nhận", data: {"csv-target": "submit"}, 
+        class: "hidden bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition" %>
 <% end %>
