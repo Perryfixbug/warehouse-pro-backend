@@ -1,4 +1,4 @@
-<%= form_with url: "/csv/create", local: true, multipart: true, class: "flex items-center gap-3", data: {controller: "csv"} do |f| %>
+<%= form_with url: "/csv/create", local: true, multipart: true, class: "flex items-center", data: {controller: "csv"} do |f| %>
   <%= f.hidden_field :type, value: type %>
 
   <div class="flex items-center gap-2">
@@ -10,5 +10,5 @@
   </div>
 
   <%= f.submit "Xác nhận", 
-        class: "bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-md transition" %>
+        class: "bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition" %>
 <% end %>

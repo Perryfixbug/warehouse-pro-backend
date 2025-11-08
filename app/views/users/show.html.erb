@@ -1,49 +1,65 @@
-<div class="max-w-3xl mx-auto mt-12 bg-white shadow-lg rounded-2xl p-8 border">
-  <div class="flex items-center space-x-6">
+<div class="max-w-3xl mx-auto mt-16 bg-white shadow-xl rounded-3xl overflow-hidden border border-gray-200">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-10 flex items-center space-x-6">
     <!-- Avatar -->
-    <div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-3xl font-bold text-blue-600">
-      <%= @user.fullname[0].upcase rescue "U" %>
+    <div class="relative">
+      <div class="w-24 h-24 rounded-full bg-white flex items-center justify-center text-4xl font-bold text-blue-600 shadow-md">
+        <%= @user.fullname[0].upcase rescue "U" %>
+      </div>
+      <div class="absolute -bottom-1 -right-1 bg-green-400 rounded-full w-5 h-5 border-2 border-white"></div>
     </div>
 
-    <!-- Thông tin cơ bản -->
-    <div>
-      <h1 class="text-2xl font-semibold text-gray-800"><%= @user.fullname %></h1>
-      <p class="text-gray-500"><%= @user.role.present? ? @user.role.titleize : "Người dùng" %></p>
-      <p class="text-sm text-gray-400 mt-1">Đã tham gia: <%= @user.created_at.strftime("%d/%m/%Y") %></p>
+    <!-- Basic Info -->
+    <div class="text-white">
+      <h1 class="text-3xl font-semibold leading-tight"><%= @user.fullname %></h1>
+      <p class="opacity-90"><%= @user.role.present? ? @user.role.titleize : "Người dùng" %></p>
+      <p class="text-sm opacity-80 mt-1">
+        Đã tham gia từ <%= @user.created_at.strftime("%d/%m/%Y") %>
+      </p>
     </div>
   </div>
 
-  <!-- Thông tin chi tiết -->
-  <div class="mt-8 space-y-4">
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <p class="text-sm text-gray-500">Email</p>
-        <p class="font-medium text-gray-800"><%= @user.email %></p>
+  <!-- Content -->
+  <div class="p-8">
+    <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-6">Thông tin chi tiết</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Email -->
+      <div class="bg-gray-50 rounded-xl p-4 border">
+        <p class="text-sm text-gray-500">📧 Email</p>
+        <p class="font-medium text-gray-800 mt-1"><%= @user.email %></p>
       </div>
 
-      <div>
-        <p class="text-sm text-gray-500">Số điện thoại</p>
-        <p class="font-medium text-gray-800"><%= @user.phone.presence || "Chưa cập nhật" %></p>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <p class="text-sm text-gray-500">Địa chỉ</p>
-        <p class="font-medium text-gray-800"><%= @user.address.presence || "Chưa cập nhật" %></p>
+      <!-- Phone -->
+      <div class="bg-gray-50 rounded-xl p-4 border">
+        <p class="text-sm text-gray-500">📱 Số điện thoại</p>
+        <p class="font-medium text-gray-800 mt-1"><%= @user.phone.presence || "Chưa cập nhật" %></p>
       </div>
 
-      <div>
-        <p class="text-sm text-gray-500">Ngày sinh</p>
-        <p class="font-medium text-gray-800">
+      <!-- Address -->
+      <div class="bg-gray-50 rounded-xl p-4 border">
+        <p class="text-sm text-gray-500">🏠 Địa chỉ</p>
+        <p class="font-medium text-gray-800 mt-1"><%= @user.address.presence || "Chưa cập nhật" %></p>
+      </div>
+
+      <!-- Birth date -->
+      <div class="bg-gray-50 rounded-xl p-4 border">
+        <p class="text-sm text-gray-500">🎂 Ngày sinh</p>
+        <p class="font-medium text-gray-800 mt-1">
           <%= @user.birth_date.present? ? @user.birth_date.strftime("%d/%m/%Y") : "Chưa cập nhật" %>
         </p>
       </div>
     </div>
-  </div>
 
-  <div class="mt-8 text-right">
-    <%= link_to "Chỉnh sửa thông tin", edit_user_path(@user),
-          class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" %>
+    <!-- Button -->
+    <div class="mt-10 text-right">
+      <%= link_to edit_user_path(@user),
+            class: "inline-flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 shadow-md transition duration-200" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232a2.5 2.5 0 113.536 3.536L7.5 20.036H4v-3.536l11.232-11.268z" />
+        </svg>
+        Chỉnh sửa thông tin
+      <% end %>
+    </div>
   </div>
 </div>
