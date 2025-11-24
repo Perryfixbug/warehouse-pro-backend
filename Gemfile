@@ -49,7 +49,7 @@ gem "fiddle"
 gem "chartkick"
 
 # Phân trang
-gem "will_paginate", "~> 3.3"
+gem "will_paginate", "~> 4.0"
 
 # Sidekiq
 gem "sidekiq"
