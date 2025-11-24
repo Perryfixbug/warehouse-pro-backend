@@ -1,14 +1,27 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[ show edit update destroy ]
+  before_action :product, only: %i[ show edit update destroy ]
 
   # GET /products or /products.json
   def index
-    @products = Product.all.paginate(page: params[:page], per_page: 10)
-    render json: @products
+    products = Product.all.paginate(page: params[:page], per_page: 10)
+    render json: {
+      status: "success",
+      data: products
+    }, status: :ok
   end
 
   # GET /products/1 or /products/1.json
   def show
+    if product
+      render json: {
+        status: "success",
+        data: product
+      }, status: :ok
+    else
+      render json: {
+        status: "error"
+      }, status: :not_found
+    end
   end
 
   # GET /products/new
@@ -22,66 +35,55 @@ class ProductsController < ApplicationController
 
   # POST /products or /products.json
   def create
-    @product = Product.new(product_params)
-
-    respond_to do |format|
-      if @product.save
-        format.html { redirect_to @product, notice: "Product was successfully created." }
-        format.json { render :show, status: :created, location: @product }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @product.errors, status: :unprocessable_entity }
-      end
+    product = Product.new(product_params)
+    if product.save
+      render json: {
+        status: "success",
+        data: product
+      }, status: :created
+    else
+      render json: {
+        status: "error",
+        error: product.errors
+      }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /products/1 or /products/1.json
   def update
-    respond_to do |format|
-      if @product.update(product_params)
-        format.html { redirect_to @product, notice: "Product was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @product }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @product.errors, status: :unprocessable_entity }
-      end
+    if product.update(product_params)
+      render json: {
+        status: "success",
+        data: product
+      }, status: :ok
+    else
+      render json: {
+        status: "error",
+        error: product.errors
+      }, status: :unprocessable_entity
     end
   end
 
   # DELETE /products/1 or /products/1.json
   def destroy
-    @product.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to products_path, notice: "Product was successfully destroyed.", status: :see_other }
-      format.json { head :no_content }
+    if product.destroy
+      render json: {
+        status: "success",
+        data: "Delete successfully! "
+      }, status: :ok
+    else
+      render json: {
+        status: "error",
+        error: product.errors
+      }, status: :unprocessable_entity
     end
-  end
-
-  def search
-    query = params[:q].to_s.strip
-    return render json: [] if query.blank?
-
-    # Tìm kiếm mờ theo id hoặc tên (ko phân biệt hoa thường)
-    results =
-      if query.match?(/^\d+$/)
-        resource_class.where(id: query)
-      else
-        resource_class.where("LOWER(name) LIKE ?", "%#{query.downcase}%")
-      end
-
-    render json: results.limit(10).select(:id, :name)
   end
 
   private
 
-  def resource_class
-    controller_name.classify.constantize
-  end
-
   # Use callbacks to share common setup or constraints between actions.
-  def set_product
-    @product = Product.find(params.expect(:id))
+  def product
+    @_product = Product.find( params[:id] )
   end
 
   # Only allow a list of trusted parameters through.
