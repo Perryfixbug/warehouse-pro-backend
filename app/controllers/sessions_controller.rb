@@ -1,20 +1,31 @@
-class SessionsController < ApplicationController
-  layout "auth", only: %i[new create destroy]
+class SessionsController < Devise::SessionsController
+  respond_to :json
 
-  def new
+  private
+
+  # Override Devise method để trả JWT khi login thành công
+  def respond_with(resource, _opts = {})
+    render json: {
+      status: "success",
+      data: resource,
+      token: request.env['warden-jwt_auth.token'] # JWT được Devise thêm vào env
+    }, status: :ok
   end
 
-  def create
-    user = User.find_by(email: params[:session][:email])
-    if user && user.authenticate(params[:session][:password])
-      log_in(user)
-      params[:session][:remember_me] == "1" ? remember(user) : forget(user)
-      redirect_to root_url
-    else
-      render :new
-    end
+  def respond_to_on_destroy
+    head :no_content
+
+    render json: {
+      status: "success"
+    }, status: :no_content
   end
 
-  def destroy
+  # Important: prevent Devise from redirecting after sign in
+  def after_sign_in_path_for(resource)
+    nil
+  end
+
+  def after_sign_out_path_for(resource_or_scope)
+    nil
   end
 end
