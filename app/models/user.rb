@@ -5,8 +5,10 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
 
   validates :fullname, presence: true, length: { maximum: 100 }
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :will_save_change_to_email?
 
+  USER_PARAMS = %w(:fullname, :email, :phone, :address, :role)
+  
   def remember
     @remember_token = User.new_token
     update_column(:remember_digest, User.digest(@remember_token))
