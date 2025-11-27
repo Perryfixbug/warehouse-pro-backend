@@ -6,9 +6,10 @@ Rails.application.routes.draw do
   resources :agencies
   resources :products
   resources :users
+  get "/me", to: "users#me"
   devise_for :users, 
-    controller: {sessions: 'sessions'}, 
-    default: {format: :json}
+    controllers: {sessions: 'users/sessions'}, 
+    defaults: {format: :json}
   get "dashboard/stats", to: "dashboard#stats"
   get "dashboard/alerts", to: "dashboard#alerts"
   get "dashboard/chart", to: "dashboard#chart"
