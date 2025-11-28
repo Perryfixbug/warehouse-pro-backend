@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_action :user, only: %i[ show edit update destroy ]
-  before_action :authenticate_user!, only: %i[index show create update destroy]
+  before_action :authenticate_user!, only: %i[show create update destroy]
+  load_and_authorize_resource except: :me
 
   # GET /users or /users.json
   def index
@@ -14,6 +15,7 @@ class UsersController < ApplicationController
 
   def me
     if user_signed_in?
+      authorize! :read, current_user
       render json: {
         status: "success",
         data: current_user
@@ -24,7 +26,6 @@ class UsersController < ApplicationController
         error: "Haven't logged in!"
       }, status: :unauthorized
     end
-    # byebug
   end
 
   # GET /users/1 or /users/1.json

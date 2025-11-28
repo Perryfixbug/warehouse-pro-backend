@@ -23,6 +23,10 @@ class User < ApplicationRecord
     return false if digest.nil?
     BCrypt::Password.new(digest).is_password?(token)
   end
+
+  def admin?
+    return role == "admin"
+  end
   # Begin class method
   class << self
     def digest(string)
