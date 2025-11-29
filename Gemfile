@@ -19,7 +19,6 @@ gem "tailwindcss-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.20"
 
@@ -60,6 +59,13 @@ gem "csv"
 gem 'redis', '~> 5.0'   
 
 gem 'rack-cors', require: 'rack/cors'
+
+gem 'dotenv-rails'
+
+gem 'devise'
+gem 'devise-jwt'
+
+gem 'cancancan', '~> 3.3'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

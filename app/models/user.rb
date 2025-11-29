@@ -1,13 +1,17 @@
 class User < ApplicationRecord
   attr_accessor :remember_token
-  has_secure_password
   has_many :orders, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
-  validates :fullname, presence: true, length: { maximum: 100 }
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :will_save_change_to_email?
+   devise :database_authenticatable,
+         :registerable,
+         :recoverable,
+         :rememberable,
+         :validatable,
+         :jwt_authenticatable,
+         jwt_revocation_strategy: JwtDenylist
 
-  USER_PARAMS = %w(:fullname, :email, :phone, :address, :role)
+  USER_PARAMS = %w(fullname email phone address role password password_confirmation).freeze
   
   def remember
     @remember_token = User.new_token
@@ -18,6 +22,10 @@ class User < ApplicationRecord
     digest = send("#{attribute}_digest")  # Metaprogramming lấy giá trị digest từ db
     return false if digest.nil?
     BCrypt::Password.new(digest).is_password?(token)
+  end
+
+  def admin?
+    return role == "admin"
   end
   # Begin class method
   class << self

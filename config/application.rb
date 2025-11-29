@@ -34,6 +34,8 @@ module CfStorage
       g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
 
+    config.api_only = true
+
     Sidekiq.configure_server do |config|
       config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
     end
