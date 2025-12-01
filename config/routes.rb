@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   resources :ordered_products
   resources :orders
-  resources :import_orders, controller: "import_orders"
-  resources :export_orders, controller: "export_orders"
   resources :agencies
   resources :products
   resources :users
