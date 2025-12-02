@@ -1,81 +1,89 @@
 class DashboardController < ApplicationController
-  
   def stats
     total_products = Product.sum(:quantity)
     inventory_value = Product.sum("quantity * price_per_unit")
     low_stock = Product.where("quantity <= 10").count
 
-    today_imports = ImportOrder.where(created_at: Time.current.beginning_of_day..Time.current.end_of_day).count
-    today_exports = ExportOrder.where(created_at: Time.current.beginning_of_day..Time.current.end_of_day).count
+    # Đầu tuần này (thứ 2)
+    this_week_start = Time.current.beginning_of_week(:monday)
 
-    render json: [
-      {
-        title: "Tổng Tồn Kho",
-        value: total_products,
-        unit: "sản phẩm",
-        change: "+0%",   
-        isPositive: true,
-        icon: "Package"
-      },
-      {
-        title: "Giá trị Kho",
-        value: inventory_value,
-        unit: "VNĐ",
-        change: "+0%",
-        isPositive: true,
-        icon: "TrendingUp"
-      },
-      {
-        title: "Hàng Gần Hết",
-        value: low_stock,
-        unit: "sản phẩm",
-        change: "-0%",
-        isPositive: low_stock < 20,
-        icon: "AlertTriangle"
-      },
-      {
-        title: "Nhập/Xuất Hôm nay",
-        value: today_imports + today_exports,
-        unit: "đơn vị",
-        change: "+0%",
-        isPositive: true,
-        icon: "TrendingDown"
-      }
-    ]
-  end
+    # Đầu tuần trước
+    last_week_start = this_week_start - 1.week
+    last_week_end   = this_week_start - 1.second
 
-  def alerts
-    products = Product.where("quantity <= ?", 10)
-                      .order(:quantity)
-                      .limit(params[:limit] || 50)
+    this_week_orders = Order.where(created_at: this_week_start..Time.current).count
+    last_week_orders = Order.where(created_at: last_week_start..last_week_end).count
 
-    render json: products.as_json(
-      only: [:id, :name, :quantity]
-    )
-  end
+    order_change_percent =
+      if last_week_orders.zero?
+        this_week_orders.zero? ? 0 : 100
+      else
+        (((this_week_orders - last_week_orders).to_f / last_week_orders) * 100).round
+      end
 
-  def chart
-    import_data = ImportOrder
-      .where(created_at: 30.days.ago..Time.current)
-      .group("DATE(created_at)")
-      .sum(:total_quantity)
-
-    export_data = ExportOrder
-      .where(created_at: 30.days.ago..Time.current)
-      .group("DATE(created_at)")
-      .sum(:total_quantity)
+    is_positive = this_week_orders >= last_week_orders
 
     render json: {
-      imports: import_data,
-      exports: export_data
+      total_products: total_products,
+      inventory_value: inventory_value.round,
+      low_stock: low_stock,
+      order: {
+        this_week: this_week_orders.round,
+        change: order_change_percent,
+        is_positive: is_positive
+      }
     }
   end
 
-  def product_list
-    products = Product.order(quantity: :desc)
+  def alerts
+    products = Product.where("quantity <= ?", 1000000)
+                      .order(:quantity)
+                      .limit(params[:limit] || 50)
 
-    render json: products.as_json(
-      only: [:id, :name, :quantity, :price_per_unit]
-    )
+    render json: {
+      status: "success",
+      data: products.as_json(
+        only: [:id, :name, :quantity]
+      )
+    }, status: :ok
+  end
+
+  def chart
+    start_of_date = 7.days.ago.beginning_of_day
+    end_of_date = Time.current.end_of_day
+
+    days = (start_of_date.to_date..end_of_date.to_date).to_a
+
+    range = start_of_date..end_of_date
+
+    import_data = ImportOrder
+                    .where(created_at: range)
+                    .group("DATE(created_at)")
+                    .count
+                    .transform_keys { |k| Date.parse(k.to_s) }
+
+    export_data = ExportOrder
+                    .where(created_at: range)
+                    .group("DATE(created_at)")
+                    .count
+                    .transform_keys { |k| Date.parse(k.to_s) }
+
+    weekday_map = {
+      1 => "T2", 2 => "T3", 3 => "T4", 4 => "T5", 
+      5 => "T6", 6 => "T7", 7 => "CN"
+    }
+
+    chart_data = days.map do |date|
+      {
+        date: weekday_map[date.cwday],
+        import: import_data[date] || 0,
+        export: export_data[date] || 0
+      }
+    end
+
+    render json: {
+      status: "success",
+      data: chart_data
+    }, status: :ok
   end
 end

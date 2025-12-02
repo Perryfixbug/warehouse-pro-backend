@@ -34,7 +34,7 @@ class OrdersController < ApplicationController
             ordered_products: {
               include: :product  
             }
-        ], methods: [:type] )
+        ], methods: [:type, :total_price] )
       }, status: :created
     else
       render json: {
@@ -42,6 +42,7 @@ class OrdersController < ApplicationController
         error: order.errors
       }, status: :unprocessable_entity
     end
+    byebug
   end
 
   def destroy
