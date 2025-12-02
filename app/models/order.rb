@@ -7,7 +7,6 @@ class Order < ApplicationRecord
   validates :user, presence: true
   validates :agency, presence: true
   validates :type, presence: true, inclusion: { in: %w[ImportOrder ExportOrder] }
-
   validate :must_have_at_least_one_product
 
   def total_price

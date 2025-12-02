@@ -3,7 +3,11 @@ class AgenciesController < ApplicationController
 
   # GET /agencies or /agencies.json
   def index
-    @agencies = Agency.all.paginate(page: params[:page], per_page: 10)
+    agencies = Agency.all.paginate(page: params[:page], per_page: 10)
+    render json: {
+      status: "success",
+      data: agencies
+    }, status: :ok
   end
 
   # GET /agencies/1 or /agencies/1.json
