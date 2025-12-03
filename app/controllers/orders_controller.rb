@@ -42,7 +42,6 @@ class OrdersController < ApplicationController
         error: order.errors
       }, status: :unprocessable_entity
     end
-    byebug
   end
 
   def destroy

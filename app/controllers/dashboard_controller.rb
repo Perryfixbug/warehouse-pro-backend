@@ -4,10 +4,8 @@ class DashboardController < ApplicationController
     inventory_value = Product.sum("quantity * price_per_unit")
     low_stock = Product.where("quantity <= 10").count
 
-    # Đầu tuần này (thứ 2)
     this_week_start = Time.current.beginning_of_week(:monday)
 
-    # Đầu tuần trước
     last_week_start = this_week_start - 1.week
     last_week_end   = this_week_start - 1.second
 
@@ -36,7 +34,7 @@ class DashboardController < ApplicationController
   end
 
   def alerts
-    products = Product.where("quantity <= ?", 1000000)
+    products = Product.where("quantity <= ?", 10)
                       .order(:quantity)
                       .limit(params[:limit] || 50)
 
