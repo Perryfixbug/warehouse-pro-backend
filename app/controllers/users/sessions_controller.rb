@@ -1,5 +1,18 @@
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
+  prepend_before_action :check_captcha, only: [ :create ]
+
+  protected
+  def check_captcha
+    recaptcha_token = params[:user][:captchaToken]
+    unless RecaptchaService.verify(recaptcha_token)
+      render json: {
+        status: "error",
+        error: "Fail to verify captcha"
+      }, status: :unprocessable_entity
+      return
+    end
+  end
 
   # LOGIN thành công
   private
