@@ -1,5 +1,4 @@
 class Auth::SessionsController < Devise::SessionsController
-  respond_to :json
   prepend_before_action :check_captcha, only: [ :create ]
 
   protected
