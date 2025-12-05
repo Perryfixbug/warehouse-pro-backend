@@ -20,25 +20,27 @@ class Order < ApplicationRecord
     ordered_products.to_a.sum { |op| op.quantity.to_f * op.price_per_unit.to_f }
   end
 
-  def self.count_order_in_week
-    start_of_date = 7.days.ago.beginning_of_day
-    end_of_date = Time.current.end_of_day
-    range = start_of_date..end_of_date
+  class << self
+    def count_order_in_week
+      start_of_date = 7.days.ago.beginning_of_day
+      end_of_date = Time.current.end_of_day
+      range = start_of_date..end_of_date
 
-    count_order_in_range(range)
-        .transform_keys { |k| Date.parse(k.to_s) }
-  end
+      count_order_in_range(range)
+          .transform_keys { |k| Date.parse(k.to_s) }
+    end
 
-  def self.this_week_range
-    start = Time.current.beginning_of_week(:monday)
-    start..Time.current
-  end
+    def this_week_range
+      start = Time.current.beginning_of_week(:monday)
+      start..Time.current
+    end
 
-  def self.last_week_range
-    this_week_start = Time.current.beginning_of_week(:monday)
-    last_week_start = this_week_start - 1.week
-    last_week_end   = this_week_start - 1.second
-    last_week_start..last_week_end
+    def last_week_range
+      this_week_start = Time.current.beginning_of_week(:monday)
+      last_week_start = this_week_start - 1.week
+      last_week_end   = this_week_start - 1.second
+      last_week_start..last_week_end
+    end
   end
 
   private

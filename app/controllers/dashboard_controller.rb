@@ -2,7 +2,8 @@ class DashboardController < ApplicationController
   WEEKDAY_MAP = {
     1 => "T2", 2 => "T3", 3 => "T4", 4 => "T5", 
     5 => "T6", 6 => "T7", 7 => "CN"
-  }
+  }.freeze
+  LIMIT_ITEM = 50.freeze
 
   def stats
     this_week_orders_count = Order.this_week_orders.count
@@ -30,7 +31,7 @@ class DashboardController < ApplicationController
   end
 
   def alerts
-    products = Product.low_stock_product(params[:limit] || 50)
+    products = Product.low_stock_product(params[:limit] || LIMIT_ITEM)
 
     render json: {
       status: "success",
