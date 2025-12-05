@@ -1,81 +1,65 @@
 class DashboardController < ApplicationController
-  
+  WEEKDAY_MAP = {
+    1 => "T2", 2 => "T3", 3 => "T4", 4 => "T5", 
+    5 => "T6", 6 => "T7", 7 => "CN"
+  }.freeze
+  LIMIT_ITEM = 50.freeze
+
   def stats
-    total_products = Product.sum(:quantity)
-    inventory_value = Product.sum("quantity * price_per_unit")
-    low_stock = Product.where("quantity <= 10").count
+    this_week_orders_count = Order.this_week_orders.count
+    last_week_orders_count = Order.last_week_orders.count
 
-    today_imports = ImportOrder.where(created_at: Time.current.beginning_of_day..Time.current.end_of_day).count
-    today_exports = ExportOrder.where(created_at: Time.current.beginning_of_day..Time.current.end_of_day).count
+    order_change_percent =
+      if last_week_orders_count.zero?
+        this_week_orders_count.zero? ? 0 : 100
+      else
+        (((this_week_orders_count - last_week_orders_count).to_f / last_week_orders_count) * 100).round
+      end
 
-    render json: [
-      {
-        title: "Tổng Tồn Kho",
-        value: total_products,
-        unit: "sản phẩm",
-        change: "+0%",   
-        isPositive: true,
-        icon: "Package"
-      },
-      {
-        title: "Giá trị Kho",
-        value: inventory_value,
-        unit: "VNĐ",
-        change: "+0%",
-        isPositive: true,
-        icon: "TrendingUp"
-      },
-      {
-        title: "Hàng Gần Hết",
-        value: low_stock,
-        unit: "sản phẩm",
-        change: "-0%",
-        isPositive: low_stock < 20,
-        icon: "AlertTriangle"
-      },
-      {
-        title: "Nhập/Xuất Hôm nay",
-        value: today_imports + today_exports,
-        unit: "đơn vị",
-        change: "+0%",
-        isPositive: true,
-        icon: "TrendingDown"
-      }
-    ]
-  end
-
-  def alerts
-    products = Product.where("quantity <= ?", 10)
-                      .order(:quantity)
-                      .limit(params[:limit] || 50)
-
-    render json: products.as_json(
-      only: [:id, :name, :quantity]
-    )
-  end
-
-  def chart
-    import_data = ImportOrder
-      .where(created_at: 30.days.ago..Time.current)
-      .group("DATE(created_at)")
-      .sum(:total_quantity)
-
-    export_data = ExportOrder
-      .where(created_at: 30.days.ago..Time.current)
-      .group("DATE(created_at)")
-      .sum(:total_quantity)
+    is_positive = this_week_orders_count >= last_week_orders_count
 
     render json: {
-      imports: import_data,
-      exports: export_data
+      total_products: Product.total_products,
+      inventory_value: Product.inventory_value.round,
+      low_stock: Product.low_stock_count,
+      order: {
+        this_week: this_week_orders_count.round,
+        change: order_change_percent,
+        is_positive: is_positive
+      }
     }
   end
 
-  def product_list
-    products = Product.order(quantity: :desc)
+  def alerts
+    products = Product.low_stock_product(params[:limit] || LIMIT_ITEM)
 
-    render json: products.as_json(
-      only: [:id, :name, :quantity, :price_per_unit]
-    )
+    render json: {
+      status: "success",
+      data: products.as_json(
+        only: [:id, :name, :quantity]
+      )
+    }, status: :ok
+  end
+
+  def chart
+    start_of_date = 7.days.ago.beginning_of_day
+    end_of_date = Time.current.end_of_day
+    days = (start_of_date.to_date..end_of_date.to_date).to_a
+
+    import_data = ImportOrder.count_order_in_week
+    export_data = ExportOrder.count_order_in_week
+
+    chart_data = days.map do |date|
+      {
+        date: WEEKDAY_MAP[date.cwday],
+        import: import_data[date] || 0,
+        export: export_data[date] || 0
+      }
+    end
+
+    render json: {
+      status: "success",
+      data: chart_data
+    }, status: :ok
   end
 end
