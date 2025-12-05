@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :users
   get "/me", to: "users#me"
   devise_for :users, 
-    controllers: {sessions: 'users/sessions'}, 
+    controllers: {sessions: 'auth/sessions'}, 
     defaults: {format: :json}
   get "dashboard/stats", to: "dashboard#stats"
   get "dashboard/alerts", to: "dashboard#alerts"
