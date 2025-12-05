@@ -1,6 +1,7 @@
 class RecaptchaService
+  GOOGLE_CAPTCHA_URL = 'https://www.google.com/recaptcha/api/siteverify'
   def self.verify(token, action = 'login')
-    uri = URI('https://www.google.com/recaptcha/api/siteverify')
+    uri = URI(GOOGLE_CAPTCHA_URL)
     response = Net::HTTP.post_form(uri, {
       secret: ENV["CAPTCHA_SECRET_KEY"],
       response: token
