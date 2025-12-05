@@ -1,9 +1,10 @@
 class DashboardController < ApplicationController
-  def stats
-    total_products = Product.sum(:quantity)
-    inventory_value = Product.sum("quantity * price_per_unit")
-    low_stock = Product.where("quantity <= 10").count
+  WEEKDAY_MAP = {
+    1 => "T2", 2 => "T3", 3 => "T4", 4 => "T5", 
+    5 => "T6", 6 => "T7", 7 => "CN"
+  }
 
+  def stats
     this_week_start = Time.current.beginning_of_week(:monday)
 
     last_week_start = this_week_start - 1.week
@@ -22,9 +23,9 @@ class DashboardController < ApplicationController
     is_positive = this_week_orders >= last_week_orders
 
     render json: {
-      total_products: total_products,
-      inventory_value: inventory_value.round,
-      low_stock: low_stock,
+      total_products: Product.total_products,
+      inventory_value: Product.inventory_value.round,
+      low_stock: Product.low_stock,
       order: {
         this_week: this_week_orders.round,
         change: order_change_percent,
@@ -34,9 +35,7 @@ class DashboardController < ApplicationController
   end
 
   def alerts
-    products = Product.where("quantity <= ?", 10)
-                      .order(:quantity)
-                      .limit(params[:limit] || 50)
+    products = Product.low_stock_product(params[:limit] || 50)
 
     render json: {
       status: "success",
@@ -49,31 +48,14 @@ class DashboardController < ApplicationController
   def chart
     start_of_date = 7.days.ago.beginning_of_day
     end_of_date = Time.current.end_of_day
-
     days = (start_of_date.to_date..end_of_date.to_date).to_a
 
-    range = start_of_date..end_of_date
-
-    import_data = ImportOrder
-                    .where(created_at: range)
-                    .group("DATE(created_at)")
-                    .count
-                    .transform_keys { |k| Date.parse(k.to_s) }
-
-    export_data = ExportOrder
-                    .where(created_at: range)
-                    .group("DATE(created_at)")
-                    .count
-                    .transform_keys { |k| Date.parse(k.to_s) }
-
-    weekday_map = {
-      1 => "T2", 2 => "T3", 3 => "T4", 4 => "T5", 
-      5 => "T6", 6 => "T7", 7 => "CN"
-    }
+    import_data = ImportOrder.count_order_in_week
+    export_data = ExportOrder.count_order_in_week
 
     chart_data = days.map do |date|
       {
-        date: weekday_map[date.cwday],
+        date: WEEKDAY_MAP[date.cwday],
         import: import_data[date] || 0,
         export: export_data[date] || 0
       }
