@@ -5,29 +5,24 @@ class DashboardController < ApplicationController
   }
 
   def stats
-    this_week_start = Time.current.beginning_of_week(:monday)
-
-    last_week_start = this_week_start - 1.week
-    last_week_end   = this_week_start - 1.second
-
-    this_week_orders = Order.where(created_at: this_week_start..Time.current).count
-    last_week_orders = Order.where(created_at: last_week_start..last_week_end).count
+    this_week_orders_count = Order.this_week_orders.count
+    last_week_orders_count = Order.last_week_orders.count
 
     order_change_percent =
-      if last_week_orders.zero?
-        this_week_orders.zero? ? 0 : 100
+      if last_week_orders_count.zero?
+        this_week_orders_count.zero? ? 0 : 100
       else
-        (((this_week_orders - last_week_orders).to_f / last_week_orders) * 100).round
+        (((this_week_orders_count - last_week_orders_count).to_f / last_week_orders_count) * 100).round
       end
 
-    is_positive = this_week_orders >= last_week_orders
+    is_positive = this_week_orders_count >= last_week_orders_count
 
     render json: {
       total_products: Product.total_products,
       inventory_value: Product.inventory_value.round,
-      low_stock: Product.low_stock,
+      low_stock: Product.low_stock_count,
       order: {
-        this_week: this_week_orders.round,
+        this_week: this_week_orders_count.round,
         change: order_change_percent,
         is_positive: is_positive
       }
