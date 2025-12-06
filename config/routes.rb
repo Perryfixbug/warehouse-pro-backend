@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :agencies
   resources :products
   resources :users
+  resources :csv
   get "/me", to: "users#me"
   devise_for :users, 
     controllers: {sessions: 'auth/sessions'}, 
@@ -11,13 +12,9 @@ Rails.application.routes.draw do
   get "dashboard/stats", to: "dashboard#stats"
   get "dashboard/alerts", to: "dashboard#alerts"
   get "dashboard/chart", to: "dashboard#chart"
-  post "/csv/create", to: "csv#create"
   get "search/universalSearch", to: "searchs#universalSearch"
   get "search/products", to: "searchs#productSearch"
   get "search/agencies", to: "searchs#agencySearch"
   get "test_notify/:id", to: "tests#ping"
-
-  require "sidekiq/web"
-  mount Sidekiq::Web => "/sidekiq"  # http://localhost:3000/sidekiq
   root "users#index"
 end
