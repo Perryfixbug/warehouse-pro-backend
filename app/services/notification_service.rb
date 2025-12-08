@@ -6,14 +6,7 @@ class NotificationService
       content: content,
       read: false
     )
-
     # Gửi realtime qua ActionCable
-    NotificationsChannel.broadcast_to(user, {
-      id: notification.id,
-      noti_type: notification.noti_type,
-      content: notification.content
-    })
-
-    notification
+    NotificationsChannel.broadcast_to(user, notification.as_json)
   end
 end
