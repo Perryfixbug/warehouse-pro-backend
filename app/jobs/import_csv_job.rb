@@ -23,7 +23,7 @@ class ImportCsvJob < ApplicationJob
     # Dọn file tạm sau khi xong
     File.delete(file_path) if File.exist?(file_path)
 
-    # ✅ Đợi một chút để đảm bảo job hoàn tất
+    # Delay để đợi job hoàn tất
     sleep(0.5)
     
     # Gửi notification thành công
