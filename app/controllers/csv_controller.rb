@@ -10,9 +10,6 @@ class CsvController < ApplicationController
     }
 
     ImportCsvJob.perform_later(tmp_path.to_s, current_user.id, type)
-    render json: {
-      status: "success"
-    },
-    status: :ok
+    render status: :no_content
   end
 end

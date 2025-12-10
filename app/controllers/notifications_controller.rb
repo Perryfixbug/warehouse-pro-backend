@@ -23,7 +23,7 @@ class NotificationsController < ApplicationController
   # Mark a notification read
   def update
     notification = current_user.notifications.find(params[:id])
-    if notification && notification.update(read: true)
+    if notification&.update(read: true)
       render json: {
         status: "success",
         data: notification
