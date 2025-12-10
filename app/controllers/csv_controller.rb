@@ -10,7 +10,6 @@ class CsvController < ApplicationController
     }
 
     ImportCsvJob.perform_later(tmp_path.to_s, current_user.id, type)
-    flash[:info] = "Đang xử lý csv..."
-    redirect_back(fallback_location: root_path)
+    render status: :no_content
   end
 end

@@ -4,7 +4,7 @@ class ImportCsvJob < ApplicationJob
   queue_as :imports
 
   def perform(file_path, user_id, type)
-    user = User.find(user_id)
+    user ||= User.find(user_id)
     model = type.constantize
     valid_columns = model.column_names.map(&:to_sym)
 
@@ -20,10 +20,12 @@ class ImportCsvJob < ApplicationJob
         Rails.logger.error("Import lỗi: #{e.message}")
       end
     end
-
     # Dọn file tạm sau khi xong
     File.delete(file_path) if File.exist?(file_path)
 
+    # Delay để đợi job hoàn tất
+    sleep(0.5)
+    
     # Gửi notification thành công
     NotificationService.notify(
       user,
