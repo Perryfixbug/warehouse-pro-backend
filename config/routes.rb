@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-  resources :ordered_products
   resources :orders
   resources :agencies
   resources :products
   resources :users
-  resources :csv
+  resources :csv, only: [:create]
   resources :notifications
   get "/me", to: "users#me"
   devise_for :users, 
