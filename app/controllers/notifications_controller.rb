@@ -2,13 +2,13 @@ class NotificationsController < ApplicationController
   def index
     render json: {
       status: "success",
-      data: current_user.notifications.order(created_at: :desc)
+      data: notifications.order(created_at: :desc)
     }, status: :ok
   end
 
   # Mark all read
   def create
-    if current_user.notifications.update(read: true)
+    if notifications.update(read: true)
       render json: {
         status: "success",
         data: current_user.notifications
@@ -33,5 +33,10 @@ class NotificationsController < ApplicationController
         status: "error"
       }, status: :unprocessable_entity
     end
+  end
+
+  private
+  def notifications
+    @notifications ||= current_user.notifications
   end
 end

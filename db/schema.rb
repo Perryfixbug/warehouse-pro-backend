@@ -89,7 +89,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_075051) do
 
   add_foreign_key "notifications", "users"
   add_foreign_key "ordered_products", "orders"
-  add_foreign_key "ordered_products", "products", on_delete: :cascade
+  add_foreign_key "ordered_products", "products"
   add_foreign_key "orders", "agencies"
   add_foreign_key "orders", "users"
 end
