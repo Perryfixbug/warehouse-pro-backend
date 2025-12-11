@@ -111,8 +111,8 @@ COPY . .
 
 # Fix CRLF + ruby.exe in bin scripts for Linux compatibility
 RUN find ./bin -type f -exec sed -i 's/\r$//' {} \; && \
-    find ./bin -type f -exec sed -i 's/ruby\.exe$/ruby/g' {} \; && \
-    chmod +x ./bin/*
+chmod +x ./bin/*
+
 
 # Expose port Rails
 EXPOSE 8000
