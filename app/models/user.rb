@@ -3,13 +3,13 @@ class User < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
-   devise :database_authenticatable,
-         :registerable,
-         :recoverable,
-         :rememberable,
-         :validatable,
-         :jwt_authenticatable,
-         jwt_revocation_strategy: JwtDenylist
+  devise :database_authenticatable,
+        :registerable,
+        :recoverable,
+        :rememberable,
+        :validatable,
+        :jwt_authenticatable,
+        jwt_revocation_strategy: JwtDenylist
 
   USER_PARAMS = %w(fullname email phone address role password password_confirmation).freeze
   

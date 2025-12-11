@@ -6,8 +6,11 @@ Rails.application.routes.draw do
   resources :csv, only: [:create]
   resources :notifications
   get "/me", to: "users#me"
-  devise_for :users, 
-    controllers: {sessions: 'auth/sessions'}, 
+  devise_for :users, path: 'auth',
+    controllers: {
+      sessions: 'auth/sessions', 
+      passwords: 'auth/passwords'
+    }, 
     defaults: {format: :json}
   get "dashboard/stats", to: "dashboard#stats"
   get "dashboard/alerts", to: "dashboard#alerts"

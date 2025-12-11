@@ -1,7 +1,12 @@
 class UsersController < ApplicationController
-  before_action :user, only: %i[ show edit update destroy ]
+  # before_action do
+  #   puts "---AUTH HEADER---"
+  #   puts request.headers['Authorization']
+  #   puts request.headers['HTTP_AUTHORIZATION']
+  # end
   before_action :authenticate_user!, only: %i[show create update destroy]
   load_and_authorize_resource except: :me
+  before_action :user, only: %i[ show edit update destroy ]
 
   # GET /users or /users.json
   def index
