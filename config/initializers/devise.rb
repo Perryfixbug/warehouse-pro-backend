@@ -320,5 +320,6 @@ Devise.setup do |config|
       ['DELETE', %r{^/sign_out$}]
     ]
     jwt.expiration_time = 1.day.to_i
+    config.navigational_formats = [] # tắt navigational formats để Devise không redirect
   end
 end
