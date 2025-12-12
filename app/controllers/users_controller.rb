@@ -6,7 +6,6 @@ class UsersController < ApplicationController
   # end
   before_action :authenticate_user!, only: %i[show create update destroy]
   load_and_authorize_resource except: :me
-  before_action :user, only: %i[ show edit update destroy ]
 
   # GET /users or /users.json
   def index
@@ -100,7 +99,7 @@ class UsersController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def user
-    @_user = User.find(params[:id])
+    @_user ||= User.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
