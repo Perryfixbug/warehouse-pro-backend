@@ -1,6 +1,14 @@
 class Auth::PasswordsController < Devise::PasswordsController
   respond_to :json
 
+  def new 
+    if User.find_by(reset_password_token: params[:reset_password_token])
+      render status: :ok
+    else
+      render status: :not_found
+    end
+  end
+
   # POST /users/password
   def create
     user = User.find_by(email: params[:email])
@@ -35,7 +43,6 @@ class Auth::PasswordsController < Devise::PasswordsController
   end
 
   private
-
   def reset_password_params
     params.permit(:reset_password_token, :password, :password_confirmation)
   end
