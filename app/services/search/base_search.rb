@@ -9,12 +9,13 @@ module Search
       ransack.result
     end
 
+    private
     def ransack
       @ransack ||= @scope.ransack(ransack_params)
     end
 
     def ransack_params
-      @params.fetch(:q, {}).permit!
+      rails NoMethodError, "Subclasses must implement ransack_params method"
     end
   end
 end

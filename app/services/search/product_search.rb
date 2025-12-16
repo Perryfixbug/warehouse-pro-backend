@@ -1,5 +1,6 @@
 module Search
   class ProductSearch < BaseSearch
+    private
     def ransack_params
       @params.fetch(:q, {}).permit(
         :name_cont,

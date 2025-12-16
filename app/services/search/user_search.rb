@@ -1,5 +1,6 @@
 module Search
   class UserSearch
+    private
     def ransack_params
       @params.fetch(:q, {}).permit(
         :fullname_or_email_cont,
@@ -8,6 +9,5 @@ module Search
         :created_at_lteq
       )
     end
-
   end
 end
