@@ -12,11 +12,11 @@ class Product < ApplicationRecord
   scope :inventory_value, -> {sum("quantity * price_per_unit")}
 
   def self.ransackable_attributes(auth_object = nil)
-    [
-      "name",
-      "unit",
-      "price_per_unit",
-      "created_at"
+    %w[
+      name,
+      unit,
+      price_per_unit,
+      created_at
     ].freeze
   end
 end

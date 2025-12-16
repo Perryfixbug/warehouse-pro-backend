@@ -45,18 +45,18 @@ class User < ApplicationRecord
     end
 
     def ransackable_attributes(auth_object = nil)
-      [
-        "fullname",
-        "email",
-        "role",
-        "created_at"
+      %w[
+        fullname
+        email
+        role
+        created_at
       ].freeze
     end
 
     def ransackable_associations(auth_object = nil)
-      [
-        "notifications",
-        "orders"
+      %w[
+        notifications
+        orders
       ].freeze
     end
   end
