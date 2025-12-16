@@ -16,8 +16,6 @@ class Order < ApplicationRecord
   scope :this_week_orders, -> { where(created_at: this_week_range) }
   scope :last_week_orders, -> { where(created_at: last_week_range) }
 
-  self.inheritance_column = :_type_disabled
-
   def total_price
     ordered_products.to_a.sum { |op| op.quantity.to_f * op.price_per_unit.to_f }
   end
