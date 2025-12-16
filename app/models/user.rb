@@ -27,6 +27,11 @@ class User < ApplicationRecord
   def admin?
     return role == "admin"
   end
+
+  def manager?
+    return role == "manager"
+  end
+
   # Begin class method
   class << self
     def digest(string)
@@ -37,6 +42,22 @@ class User < ApplicationRecord
 
     def new_token
       SecureRandom.urlsafe_base64
+    end
+
+    def ransackable_attributes(auth_object = nil)
+      [
+        "fullname",
+        "email",
+        "role",
+        "created_at"
+      ]
+    end
+
+    def ransackable_associations(auth_object = nil)
+      [
+        "notifications",
+        "orders"
+      ]
     end
   end
   # End class method
