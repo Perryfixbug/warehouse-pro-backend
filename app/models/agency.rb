@@ -13,5 +13,9 @@ class Agency < ApplicationRecord
         updated_at
       ]
     end
+
+    def ransackable_associations(auth_object = nil)
+      ["orders"]
+    end
   end
 end
