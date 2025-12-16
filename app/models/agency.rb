@@ -11,11 +11,11 @@ class Agency < ApplicationRecord
         location
         created_at
         updated_at
-      ]
+      ].freeze
     end
 
     def ransackable_associations(auth_object = nil)
-      ["orders"]
+      ["orders"].freeze
     end
   end
 end

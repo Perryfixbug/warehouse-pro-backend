@@ -17,6 +17,6 @@ class Product < ApplicationRecord
       "unit",
       "price_per_unit",
       "created_at"
-    ]
+    ].freeze
   end
 end

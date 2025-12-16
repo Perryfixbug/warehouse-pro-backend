@@ -50,14 +50,14 @@ class User < ApplicationRecord
         "email",
         "role",
         "created_at"
-      ]
+      ].freeze
     end
 
     def ransackable_associations(auth_object = nil)
       [
         "notifications",
         "orders"
-      ]
+      ].freeze
     end
   end
   # End class method

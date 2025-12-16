@@ -52,7 +52,7 @@ class Order < ApplicationRecord
         type
         created_at
         updated_at
-      ]
+      ].freeze
     end
 
     def ransackable_associations(auth_object = nil)
@@ -60,7 +60,7 @@ class Order < ApplicationRecord
         agency
         user
         ordered_products
-      ]
+      ].freeze
     end
   end
 

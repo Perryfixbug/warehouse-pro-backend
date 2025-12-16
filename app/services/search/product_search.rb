@@ -1,20 +1,5 @@
 module Search
-  class ProductSearch
-    def initialize(params, scope)
-      @params = params
-      @scope = scope
-    end
-
-    def call
-      ransack.result
-    end
-
-    private
-    
-    def ransack
-      @ransack ||= @scope.ransack(ransack_params)
-    end
-    
+  class ProductSearch < BaseSearch
     def ransack_params
       @params.fetch(:q, {}).permit(
         :name_cont,
