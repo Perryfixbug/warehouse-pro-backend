@@ -1,10 +1,12 @@
 class OrdersController < ApplicationController
-
   # GET /orders or /orders.json
   def index
-    orders = Order.includes(:agency, :user, :ordered_products)
-                  .order(created_at: :desc)
-                  .all
+    order_all = Order
+                .left_joins(:agency)
+                .includes(:user, ordered_products: :product)
+                .order(created_at: :desc)
+    orders = Search::OrderSearch.new(params, order_all).call
+    p orders
     render json: {
       status: "success",
       data: orders.as_json(include: [

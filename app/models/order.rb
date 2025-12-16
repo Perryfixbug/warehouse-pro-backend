@@ -16,6 +16,8 @@ class Order < ApplicationRecord
   scope :this_week_orders, -> { where(created_at: this_week_range) }
   scope :last_week_orders, -> { where(created_at: last_week_range) }
 
+  self.inheritance_column = :_type_disabled
+
   def total_price
     ordered_products.to_a.sum { |op| op.quantity.to_f * op.price_per_unit.to_f }
   end
@@ -40,6 +42,25 @@ class Order < ApplicationRecord
       last_week_start = this_week_start - 1.week
       last_week_end   = this_week_start - 1.second
       last_week_start..last_week_end
+    end
+
+    def ransackable_attributes(auth_object = nil)
+      %w[
+        id
+        agency_id
+        user_id
+        type
+        created_at
+        updated_at
+      ]
+    end
+
+    def ransackable_associations(auth_object = nil)
+      %w[
+        agency
+        user
+        ordered_products
+      ]
     end
   end
 
