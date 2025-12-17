@@ -1,5 +1,5 @@
 module Search
-  class UserSearch
+  class UserSearch < BaseSearch
     private
     def ransack_params
       @params.fetch(:q, {}).permit(
