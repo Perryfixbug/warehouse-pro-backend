@@ -13,10 +13,14 @@ class Product < ApplicationRecord
 
   def self.ransackable_attributes(auth_object = nil)
     %w[
-      name,
-      unit,
-      price_per_unit,
+      name
+      unit
+      price_per_unit
       created_at
     ].freeze
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    [].freeze
   end
 end

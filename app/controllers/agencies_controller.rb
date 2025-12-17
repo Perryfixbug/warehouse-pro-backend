@@ -2,9 +2,14 @@ class AgenciesController < ApplicationController
   # GET /agencies or /agencies.json
   def index
     agencies = Search::AgencySearch.new(params, Agency.all).call
+    agencies_per_page = agencies.paginate(page: params[:page] || 1, per_page: 10)
     render json: {
       status: "success",
-      data: agencies
+      data: agencies_per_page,
+      meta: {
+        current_page: agencies_per_page.current_page,
+        total_pages: agencies_per_page.total_pages
+      }
     }, status: :ok
   end
 

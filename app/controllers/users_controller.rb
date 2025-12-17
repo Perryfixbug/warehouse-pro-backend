@@ -4,11 +4,15 @@ class UsersController < ApplicationController
 
   # GET /users or /users.json
   def index
-    # users = User.all.paginate(page: params[:page], per_page: 10)
     users = Search::UserSearch.new(params, User.all).call
+    users_per_page = users.paginate(page: params[:page] || 1, per_page: 10)
     render json: {
       status: "success",
-      data: users
+      data: users_per_page,
+      meta: {
+        current_page: users_per_page.current_page,
+        total_pages: users_per_page.total_pages
+      }
     }, status: :ok
   end
 
