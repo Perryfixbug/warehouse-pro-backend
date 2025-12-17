@@ -41,6 +41,25 @@ class Order < ApplicationRecord
       last_week_end   = this_week_start - 1.second
       last_week_start..last_week_end
     end
+
+    def ransackable_attributes(auth_object = nil)
+      %w[
+        id
+        agency_id
+        user_id
+        type
+        created_at
+        updated_at
+      ].freeze
+    end
+
+    def ransackable_associations(auth_object = nil)
+      %w[
+        agency
+        user
+        ordered_products
+      ].freeze
+    end
   end
 
   private

@@ -10,4 +10,13 @@ class Product < ApplicationRecord
   scope :low_stock_product, ->(limit) {where("quantity <= ?", LOW_STOCK_LIMIT).order(:quantity).limit(limit)}
   scope :total_products, -> {sum(:quantity)}
   scope :inventory_value, -> {sum("quantity * price_per_unit")}
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      name,
+      unit,
+      price_per_unit,
+      created_at
+    ].freeze
+  end
 end
