@@ -6,15 +6,20 @@ class OrdersController < ApplicationController
                 .includes(:user, ordered_products: :product)
                 .order(created_at: :desc)
     orders = Search::OrderSearch.new(params, order_all).call
-    p orders
+    orders_per_page = orders.paginate(page: params[:page] || 1, per_page: 10)
+
     render json: {
       status: "success",
-      data: orders.as_json(include: [
+      data: orders_per_page.as_json(include: [
           :agency, :user, 
           ordered_products: {
             include: :product  
           }
-      ], methods: [:type, :total_price] )
+      ], methods: [:type, :total_price] ),
+      meta: {
+        current_page: orders_per_page.current_page,
+        total_pages: orders_per_page.total_pages
+      }
     }, status: :ok
   end
 

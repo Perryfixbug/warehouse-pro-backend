@@ -3,11 +3,15 @@ class ProductsController < ApplicationController
 
   # GET /products or /products.json
   def index
-    # products = Product.paginate(page: params[:page], per_page: 10)
     products = Search::ProductSearch.new(params, Product.all).call
+    products_per_page = products.paginate(page: params[:page] || 1, per_page: 10)
     render json: {
       status: "success",
-      data: products
+      data: products_per_page,
+      meta: {
+        current_page: products_per_page.current_page,
+        total_pages: products_per_page.total_pages
+      }
     }, status: :ok
   end
 
