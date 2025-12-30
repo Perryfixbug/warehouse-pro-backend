@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_26_075051) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_30_064402) do
   create_table "agencies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "location"
@@ -70,6 +70,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_075051) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "refresh_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_refresh_tokens_on_expires_at"
+    t.index ["token_digest"], name: "index_refresh_tokens_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "fullname"
     t.string "email", null: false
@@ -92,4 +104,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_075051) do
   add_foreign_key "ordered_products", "products"
   add_foreign_key "orders", "agencies"
   add_foreign_key "orders", "users"
+  add_foreign_key "refresh_tokens", "users"
 end

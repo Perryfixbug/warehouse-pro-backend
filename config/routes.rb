@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   resources :users
   resources :csv, only: [:create]
   resources :notifications
+  namespace :auth do
+    resources :refreshs, only: [:create]
+  end
   get "/me", to: "users#me"
   devise_for :users, path: 'auth',
     controllers: {
