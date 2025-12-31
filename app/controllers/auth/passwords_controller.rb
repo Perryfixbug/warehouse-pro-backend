@@ -1,11 +1,13 @@
 class Auth::PasswordsController < Devise::PasswordsController
   respond_to :json
 
-  def new 
-    if User.find_by(reset_password_token: params[:reset_password_token])
-      render status: :ok
+  def new
+    user = User.with_reset_password_token(params[:reset_password_token])
+
+    if user
+      render json: { status: "success" }, status: :ok
     else
-      render status: :not_found
+      render json: { status: "error" }, status: :not_found
     end
   end
 
@@ -30,6 +32,10 @@ class Auth::PasswordsController < Devise::PasswordsController
   def update
     user = User.reset_password_by_token(reset_password_params)
     if user.errors.empty?
+      RefreshToken
+        .where(user_id: user.id, revoked_at: nil)
+        .update_all(revoked_at: Time.current)
+
       render json: { 
         status: "success",
         message: "Đặt lại mật khẩu thành công" 

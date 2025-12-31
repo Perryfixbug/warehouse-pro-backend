@@ -52,6 +52,7 @@ gem "will_paginate", "~> 3.3"
 
 # Sidekiq
 gem "sidekiq"
+gem "sidekiq-cron"
 
 # Xử lí file csv
 gem "csv"
