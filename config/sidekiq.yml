@@ -1,5 +1,11 @@
 :concurrency: 5
 :queues:
   - default
+  - maintenance
   - mailers
   - imports
+
+:schedule:
+  cleanup_refresh_tokens:
+    cron: "0 3 * * 0" # 03:00 sáng Chủ Nhật
+    class: CleanupRefreshTokensJob
