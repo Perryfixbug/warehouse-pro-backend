@@ -13,7 +13,7 @@ class Auth::RefreshsController < ApplicationController
     # 🔁 ROTATE TOKEN
     token.revoke!
 
-    new_raw_token = SecureRandom.hex(64)
+    new_raw_token = TokenService.generate
     RefreshToken.create!(
       user: user,
       token_digest: TokenService.digest(new_raw_token),
