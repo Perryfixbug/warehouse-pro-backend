@@ -3,7 +3,7 @@ class OrdersController < ApplicationController
   def index
     order_all = Order
                 .left_joins(:agency)
-                .includes(:user, ordered_products: :product)
+                .includes(:user, :agency, ordered_products: :product)
                 .order(created_at: :desc)
     orders = Search::OrderSearch.new(params, order_all).call
     orders_per_page = orders.paginate(page: params[:page] || 1, per_page: 10)
