@@ -97,6 +97,8 @@ group :development do
 
   gem "ruby-lsp"
   gem "rubocop"
+
+  gem "bullet"
 end
 
 group :test do
